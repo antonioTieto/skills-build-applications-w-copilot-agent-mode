@@ -1,0 +1,43 @@
+import cors from 'cors';
+import express from 'express';
+import activitiesRouter from './routes/activities.js';
+import { connectToDatabase, mongoUri } from './config/database.js';
+import leaderboardRouter from './routes/leaderboard.js';
+import { baseUrl, port } from './server.js';
+import teamsRouter from './routes/teams.js';
+import usersRouter from './routes/users.js';
+import workoutsRouter from './routes/workouts.js';
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.get('/api/health', (_req, res) => {
+    res.json({ status: 'ok', baseUrl });
+});
+app.get('/api', (_req, res) => {
+    res.json({
+        baseUrl,
+        routes: [
+            '/api/users/',
+            '/api/teams/',
+            '/api/activities/',
+            '/api/leaderboard/',
+            '/api/workouts/'
+        ]
+    });
+});
+app.use('/api/users', usersRouter);
+app.use('/api/teams', teamsRouter);
+app.use('/api/activities', activitiesRouter);
+app.use('/api/leaderboard', leaderboardRouter);
+app.use('/api/workouts', workoutsRouter);
+const start = async () => {
+    await connectToDatabase();
+    app.listen(port, () => {
+        console.log(`Backend listening on http://localhost:${port}`);
+        console.log(`MongoDB URI: ${mongoUri}`);
+    });
+};
+start().catch((error) => {
+    console.error('Failed to start backend server:', error);
+    process.exit(1);
+});
