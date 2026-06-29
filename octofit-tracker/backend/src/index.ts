@@ -1,18 +1,14 @@
 import cors from 'cors';
-import dotenv from 'dotenv';
 import express from 'express';
-import mongoose from 'mongoose';
 import activitiesRouter from './routes/activities.js';
+import { connectToDatabase, mongoUri } from './database.js';
 import leaderboardRouter from './routes/leaderboard.js';
 import teamsRouter from './routes/teams.js';
 import usersRouter from './routes/users.js';
 import workoutsRouter from './routes/workouts.js';
 
-dotenv.config();
-
 const app = express();
 const port = Number(process.env.PORT ?? 8000);
-const mongoUri = process.env.MONGODB_URI ?? 'mongodb://127.0.0.1:27017/octofit_db';
 const codespaceName = process.env.CODESPACE_NAME;
 const baseUrl = codespaceName
   ? `https://${codespaceName}-8000.app.github.dev`
@@ -45,7 +41,7 @@ app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/workouts', workoutsRouter);
 
 const start = async (): Promise<void> => {
-  await mongoose.connect(mongoUri);
+  await connectToDatabase();
 
   app.listen(port, () => {
     console.log(`Backend listening on http://localhost:${port}`);

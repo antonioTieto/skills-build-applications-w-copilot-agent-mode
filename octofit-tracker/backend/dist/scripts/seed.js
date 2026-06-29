@@ -1,14 +1,11 @@
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
 import { Activity } from '../models/Activity.js';
+import { connectToDatabase, disconnectFromDatabase } from '../database.js';
 import { Leaderboard } from '../models/Leaderboard.js';
 import { Team } from '../models/Team.js';
 import { User } from '../models/User.js';
 import { Workout } from '../models/Workout.js';
-dotenv.config();
-const mongoUri = process.env.MONGODB_URI ?? 'mongodb://127.0.0.1:27017/octofit_db';
 const seed = async () => {
-    await mongoose.connect(mongoUri);
+    await connectToDatabase();
     // Seed the octofit_db database with test data
     console.log('Seed the octofit_db database with test data');
     await Promise.all([
@@ -108,10 +105,10 @@ const seed = async () => {
         { user: users[2]._id, score: 640, rank: 3, weekStart }
     ]);
     console.log('Seed completed successfully.');
-    await mongoose.disconnect();
+    await disconnectFromDatabase();
 };
 seed().catch(async (error) => {
     console.error('Seed failed:', error);
-    await mongoose.disconnect();
+    await disconnectFromDatabase();
     process.exit(1);
 });
