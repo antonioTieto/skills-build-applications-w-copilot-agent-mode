@@ -1,7 +1,7 @@
 import cors from 'cors';
 import express from 'express';
 import activitiesRouter from './routes/activities.js';
-import { connectToDatabase, mongoUri } from './database.js';
+import { connectToDatabase, mongoUri } from './config/database.js';
 import leaderboardRouter from './routes/leaderboard.js';
 import teamsRouter from './routes/teams.js';
 import usersRouter from './routes/users.js';
